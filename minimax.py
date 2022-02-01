@@ -131,6 +131,13 @@ class Minimax:
         # Square chosen by user
         self.x, self.y = None, None
 
+        # Scoring
+        self.score = {
+            -1: 0,
+            0: 0,
+            1: 0
+        }
+
     def play(self):
         if self.done:
             return
@@ -151,8 +158,9 @@ class Minimax:
 
         self.turn *= -1  
         
-        if not (self.board.get_winner() is None):
+        if not ((winner := self.board.get_winner()) is None):
             self.done = True
+            self.score[winner] += 1
 
     def reset(self):
         # Reset the board by pressing R
@@ -167,10 +175,24 @@ class Minimax:
 
     def display(self, screen):
         font = pygame.font.Font('freesansbold.ttf', 75)
+        font_smaller = pygame.font.Font('freesansbold.ttf', 50)
         if self.done:
             message = END[self.board.get_winner()]
             score = font.render(message, True, (0, 0, 0))
             screen.blit(score, (50, 250))
+
+            wins = f"Wins: %d" % self.score[1]
+            draws = f"Draws: %d" % self.score[0]
+            losses = f"Losses: %d" % self.score[-1]
+
+            wins_message = font_smaller.render(wins, True, (0, 0, 0))
+            draws_message = font_smaller.render(draws, True, (0, 0, 0))
+            losses_message = font_smaller.render(losses, True, (0, 0, 0))
+
+            screen.blit(wins_message, (50, 325))
+            screen.blit(draws_message, (50, 375))
+            screen.blit(losses_message, (50, 425))
+
         else:
             for j in range(3):
                 for i in range(3):
