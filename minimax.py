@@ -154,6 +154,13 @@ class Minimax:
         if not (self.board.get_winner() is None):
             self.done = True
 
+    def reset(self):
+        # Reset the board by pressing R
+        self.board = Board()
+        self.turn = HUMAN
+        self.done = False
+        self.x, self.y = None, None
+
     '''
         PYGAME Section to display game
     '''
@@ -180,6 +187,8 @@ class Minimax:
             if event.type == KEYDOWN:
                 if event.key == K_ESCAPE:
                     return True
+                if event.key == K_r:
+                    self.reset()
             if event.type == MOUSEBUTTONDOWN:
                 pos = pygame.mouse.get_pos()
                 self.x = pos[0] // 200
