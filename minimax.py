@@ -37,6 +37,7 @@ class Board:
         return True
 
     def best_move(self):
+        # AI plays best move based on minimax
         best = float('inf')
         move = None
         for i in range(3):
@@ -53,9 +54,11 @@ class Board:
         self.board[move[0]][move[1]] = AI
     
     def minimax(self, b, minimising=True):
+        # Check if game is finished
         if not ((s := self.win(b)) is None):
             return s
 
+        # Otherwise perform minimax algorithm on all possible moves
         best = float('inf') if minimising else float('-inf')
         for i in range(3):
             for j in range(3):
@@ -114,6 +117,7 @@ class Board:
         
         return available
 
+    # toString
     def __repr__(self) -> str:
         return np.array_str(self.board)
 
@@ -124,6 +128,7 @@ class Minimax:
         self.turn = HUMAN
         self.done = False
 
+        # Square chosen by user
         self.x, self.y = None, None
 
     def play(self):
