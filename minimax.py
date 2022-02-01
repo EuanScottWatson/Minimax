@@ -7,7 +7,22 @@ from pygame.locals import *
 AI = -1
 HUMAN = 1
 
+# Message at end of game
+END = {
+    -1: "You Lose",
+    0: "Draw",
+    1: "You win"
+}
 
+# Pieces on board
+VALUES = {
+    -1: "O",
+    0: " ",
+    1: "X"
+}
+
+
+# Houses the board and the minimax logic
 class Board:
     def __init__(self, start=None):
         self.board = np.zeros((3, 3)) if start is None else start
@@ -56,19 +71,22 @@ class Board:
 
     def win(self, board):
         for i in range(3):
+            # Checks for straight line wins
             if (sum(board[i]) in [-3, 3]):
                 return board[i][0] 
             if (sum(board.T[i]) in [-3, 3]):
                 return board.T[i][0] 
         
+        # Checks the diagonal
         if (((board[0][0] + board[1][1] + board[2][2]) in [-3, 3]) or 
                 ((board[2][0] + board[1][1] + board[0][2]) in [-3, 3])):
                 return board[1][1]
         
-        if 0 in board:
-            return None
+        # Checks for draw
+        if 0 not in board:
+            return 0
         
-        return 0
+        return None
 
     def get_winner(self):
         return self.win(self.board)
@@ -99,18 +117,6 @@ class Minimax:
 
         self.x, self.y = None, None
 
-        self.end = {
-            -1: "You Lose",
-            0: "Draw",
-            1: "You win"
-        }
-
-        self.values = {
-            -1: "O",
-            0: " ",
-            1: "X"
-        }
-
     def play(self):
         if self.done:
             return
@@ -134,17 +140,20 @@ class Minimax:
         if not (self.board.get_winner() is None):
             self.done = True
 
+    '''
+        PYGAME Section to display game
+    '''
 
     def display(self, screen):
         font = pygame.font.Font('freesansbold.ttf', 75)
         if self.done:
-            message = self.end[self.board.get_winner()]
+            message = END[self.board.get_winner()]
             score = font.render(message, True, (0, 0, 0))
             screen.blit(score, (50, 250))
         else:
             for j in range(3):
                 for i in range(3):
-                    value = self.values[self.board.board[j][i]]
+                    value = VALUES[self.board.board[j][i]]
                     score = font.render(value, True, (0, 0, 0))
                     screen.blit(score, (200 * i + 75, 200 * j + 75))
                 pygame.draw.line(screen, (0, 0, 0), (0, 200 * j), (600, 200 * j), 5)
