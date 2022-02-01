@@ -27,6 +27,8 @@ class Board:
     def __init__(self, start=None):
         self.board = np.zeros((3, 3)) if start is None else start
 
+        self.memoisation = {}
+
     def place(self, x, y, value):
         if (self.board[x][y] != 0):
             return False
@@ -59,13 +61,20 @@ class Board:
             for j in range(3):
                 if b[i][j] == 0:
                     b[i][j] = AI if minimising else HUMAN
-                    score = self.minimax(np.copy(b), not minimising)
+
+                    if np.array_str(b) in self.memoisation.keys():
+                        score = self.memoisation[np.array_str(b)]
+                    else:
+                        score = self.minimax(np.copy(b), not minimising)
+                    
                     b[i][j] = 0
 
                     if minimising:
                         best = min(score, best)
                     else:
                         best = max(score, best)
+        
+        self.memoisation[np.array_str(b)] = best
 
         return best 
 
